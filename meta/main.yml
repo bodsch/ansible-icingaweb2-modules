@@ -1,0 +1,30 @@
+---
+
+galaxy_info:
+  role_name: icingaweb2_modules
+  namespace: bodsch
+
+  author: Bodo Schulz
+  description: ansible role to install icingaweb2-modules
+
+  license: BSD
+  min_ansible_version: 2.10
+
+  platforms:
+    - name: ArchLinux
+    - name: Debian
+      versions:
+        # 10
+        - buster
+        # 11
+        - bullseye
+
+  galaxy_tags:
+    - monitoring
+    - icinga
+    - icingaweb
+    - web
+
+dependencies: []
+
+...

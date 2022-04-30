@@ -1,0 +1,14 @@
+---
+
+icingaweb_modules_local_tmp_directory: "{{
+  lookup('env', 'CUSTOM_LOCAL_TMP_DIRECTORY') |
+  default(lookup('env', 'HOME') ~ '/.cache/ansible/icingaweb-modules', true) }}"
+
+icingaweb_modules_remote_tmp_directory: "/tmp/icingaweb-modules"
+
+# entspricht dem owner
+icingaweb_user: ""
+# entspricht der grupp
+icingaweb_group: ""
+
+...

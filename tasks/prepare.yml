@@ -1,0 +1,59 @@
+---
+
+- name: include OS specific configuration
+  include_vars: "{{ lookup('first_found', params) }}"
+  vars:
+    params:
+      paths:
+        - "vars"
+      files:
+        # eg. debian-10 / ubuntu-20 / centos-8 / oraclelinux-8
+        - "{{ ansible_distribution | lower }}-{{ ansible_distribution_major_version }}.yml"
+        # eg. archlinux-systemd / archlinux-openrc
+        - "{{ ansible_distribution | lower }}-{{ ansible_service_mgr | lower }}.yml"
+        # eg. debian / ubuntu / centos / oraclelinux
+        - "{{ ansible_distribution | lower }}.yml"
+        # eg. redhat / debian
+        - "{{ ansible_os_family | lower }}.yml"
+        - default.yaml
+      skip: true
+
+- name: create local temp directory
+  become: false
+  delegate_to: localhost
+  file:
+    path: "{{ icingaweb_modules_local_tmp_directory }}"
+    state: directory
+    mode: 0700
+
+- name: create remote temp directory
+  file:
+    path: "{{ icingaweb_modules_remote_tmp_directory }}"
+    state: directory
+    mode: 0700
+
+- block:
+    - name: "find primary group for user '{{ icingaweb_user }}'"
+      become: true
+      getent:
+        database: group
+        key: "{{ icingaweb_user }}"
+        split: ':'
+
+    - name: "set icingaweb_group '{{ getent_group | list | first }}'"
+      set_fact:
+        icingaweb_group: "{{ getent_group | list | first }}"
+      when:
+        - getent_group is defined
+  when:
+    - not icingaweb_group is defined or icingaweb_group | length > 0
+
+- name: make sure ansible local facts directory exists
+  file:
+    dest: /etc/ansible/facts.d
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+...

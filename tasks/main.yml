@@ -1,0 +1,12 @@
+---
+
+- name: prepare
+  include_tasks: prepare.yml
+
+- name: download
+  include_tasks: download.yml
+
+- name: install
+  include_tasks: install.yml
+
+...
