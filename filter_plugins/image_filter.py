@@ -3,12 +3,7 @@ from __future__ import (absolute_import, division, print_function)
 __metaclass__ = type
 
 from ansible.utils.display import Display
-
-# import json
 import os
-
-# https://docs.ansible.com/ansible/latest/dev_guide/developing_plugins.html
-# https://blog.oddbit.com/post/2019-04-25-writing-ansible-filter-plugins/
 
 display = Display()
 
@@ -36,7 +31,10 @@ class FilterModule(object):
         """
         display.v("dict_from_list({}, {})".format(data, search))
 
-        result = next((item for item in data if item.get('name') == search), {})
+        if(isinstance(data, dict)):
+            result = data.get(search, {})
+        else:
+            result = next((item for item in data if item.get('name') == search), {})
 
         display.v("result : {}".format(result))
 

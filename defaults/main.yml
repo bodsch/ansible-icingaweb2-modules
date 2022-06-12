@@ -2,41 +2,6 @@
 
 icingaweb_modules_install_dir: /usr/share/icingaweb2
 
-icingaweb_modules:
-  audit:
-    enabled: true
-    src: https://github.com/Icinga/icingaweb2-module-audit.git
-    version: v1.0.1
-    configuration:
-      log:
-        type: file
-        path: /var/log/icingaweb2/audit.log
-      stream:
-        format: json
-        path: /var/log/icingaweb2/json.log
-
-
-  pdfexport:
-    enabled: true
-    src: https://github.com/Icinga/icingaweb2-module-pdfexport
-    version: v0.10.1
-
-  graphite:
-    enabled: false
-    src: https://github.com/Icinga/icingaweb2-module-graphite.git
-    version: v1.1.0
-    configuration:
-      host: localhost
-      ui:
-        default_time_range: 12
-        default_time_range_unit: hours
-
-  grafana:
-    enabled: false
-    src: https://github.com/Mikesch-mp/icingaweb2-module-grafana.git
-    version: v1.3.6
-    configuration:
-      host: tsdb.icinga.local
-      enableLink: true
+icingaweb_modules: {}
 
 ...

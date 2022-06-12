@@ -14,9 +14,10 @@
   loop_control:
     label: "theme: {{ item.key }}"
   when:
-    - item.enabled
-    - item.configuration is defined
-    - item.configuration | count > 0
+    - item.value.enabled is defined
+    - item.value.enabled
+    - item.value.configuration is defined
+    - item.value.configuration | count > 0
 
 - name: configure module
   become: true
@@ -31,10 +32,26 @@
   loop_control:
     label: "theme: {{ item.key }}"
   when:
-    - item.enabled
-    - item.configuration is defined
-    - item.configuration | count > 0
+    - item.value.enabled is defined
+    - item.value.enabled
+    - item.value.configuration is defined
+    - item.value.configuration | count > 0
 
+- name: extract module information for grafana
+  set_fact:
+    _icingaweb_module_grafana: "{{ icingaweb_modules | dict_from_list('grafana') }}"
 
+- name: create grafanas graphs.ini
+  become: true
+  template:
+    src: modules/grafana/graphs.ini.j2
+    dest: /etc/icingaweb2/modules/grafana/graphs.ini
+    owner: "{{ icingaweb_user }}"
+    group: "{{ icingaweb_group }}"
+    mode: 0666
+  when:
+    - _icingaweb_module_grafana is defined
+    - _icingaweb_module_grafana.enabled | default('false')
+    - _icingaweb_module_grafana.graphs | default({}) | count > 0
 
 ...

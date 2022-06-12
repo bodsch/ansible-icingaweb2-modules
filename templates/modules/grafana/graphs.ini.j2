@@ -1,0 +1,22 @@
+#jinja2: trim_blocks: True, lstrip_blocks: True
+; {{ ansible_managed }}
+{% set _grafana_graphs = _icingaweb_module_grafana.graphs | default([]) %}
+{% set _attr = ['dashboard','dashboarduid','panelId','orgId','repeatable'] %}
+
+{% if _grafana_graphs is defined and
+      _grafana_graphs | count != 0 %}
+  {% for g in _grafana_graphs %}
+    {% set _config = _grafana_graphs[g] %}
+[{{ g }}]
+    {% for k,v in _config.items() | sort %}
+      {% if k in _attr %}
+        {% if v | type == "bool" %}
+{{ k }} = "{{ v | default('false') | bool | ternary( 'yes', 'no') }}"
+        {% else %}
+{{ k }} = "{{ v }}"
+        {% endif %}
+      {% endif %}
+    {% endfor %}
+
+  {% endfor %}
+{% endif %}

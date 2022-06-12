@@ -13,14 +13,13 @@ icingaweb_modules:
         format: json
         path: /var/log/icingaweb2/json.log
 
-
   pdfexport:
     enabled: true
     src: https://github.com/Icinga/icingaweb2-module-pdfexport
     version: v0.10.1
 
   graphite:
-    enabled: false
+    enabled: true
     src: https://github.com/Icinga/icingaweb2-module-graphite.git
     version: v1.1.0
     configuration:
@@ -30,11 +29,30 @@ icingaweb_modules:
         default_time_range_unit: hours
 
   grafana:
-    enabled: false
+    enabled: true
     src: https://github.com/Mikesch-mp/icingaweb2-module-grafana.git
     version: v1.3.6
     configuration:
       host: tsdb.icinga.local
       enableLink: true
+      defaultdashboard:
+        # name: icinga2-default
+        uid: Z-TfDRpGz
+      # publichost
+      # publicprotocol
+      # debug: true
+    graphs:
+      ping4:
+        dashboard: hostalive
+        dashboarduid: Z-TfDRpGz
+        panelId: 9
+        orgId: 1
+        repeatable: false
+      hostalive:
+        dashboard: hostalive
+        dashboarduid: Z-TfDRpGx
+        panelId: 10
+        orgId: 1
+        repeatable: false
 
 ...
