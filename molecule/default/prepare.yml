@@ -51,7 +51,7 @@
 
   roles:
     # this role has some problems with archlinux
-    # - role: nginx
+    - role: nginx
     - role: php-fpm
     - role: icingaweb
 

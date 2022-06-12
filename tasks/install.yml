@@ -1,6 +1,6 @@
 ---
 
-- name: create theme archive on ansible controller
+- name: create module archive on ansible controller
   become: false
   delegate_to: localhost
   archive:
@@ -16,9 +16,11 @@
   loop:
     "{{ icingaweb_modules | dict2items }}"
   loop_control:
-    label: "theme: {{ item.key }}"
-  async: 1000
-  poll: 10
+    label: "module: {{ item.key }}"
+  when:
+    - item.value['download'] | default('false') | bool
+  # async: 1000
+  # poll: 10
 
 - name: define checksums from archive
   become: false
@@ -26,15 +28,15 @@
   stat:
     path: "{{ icingaweb_modules_local_tmp_directory }}/{{ item.key }}.zip"
     checksum_algorithm: sha256
-  register: _theme_checksum
+  register: _module_checksum
   loop:
     "{{ icingaweb_modules | dict2items }}"
   loop_control:
-    label: "theme: {{ item.key }}"
+    label: "module: {{ item.key }}"
 
 - name: append checksums to icingaweb_modules
   set_fact:
-    icingaweb_modules: "{{ icingaweb_modules | append_checksum(_theme_checksum) }}"
+    icingaweb_modules: "{{ icingaweb_modules | append_checksum(_module_checksum) }}"
 
 - name: update facts
   setup:
@@ -48,44 +50,27 @@
   loop:
     "{{ icingaweb_modules | dict2items }}"
   loop_control:
-    label: "theme: {{ item.key }}"
+    label: "module: {{ item.key }}"
+  when:
+    - item.value['download'] | default('false') | bool
 
-- name: extract theme archives
+- name: extract module archives
   unarchive:
     src: "{{ icingaweb_modules_remote_tmp_directory }}/{{ item.key }}.zip"
-    dest: "{{ icingaweb_modules_remote_tmp_directory }}/"
-    mode: 0700
-    remote_src: true
-  loop:
-    "{{ icingaweb_modules | dict2items }}"
-  loop_control:
-    label: "theme: {{ item.key }}"
-
-- name: copy modules in place
-  become: true
-  copy:
-    src: "{{ icingaweb_modules_remote_tmp_directory }}/{{ item.key }}/"
+    #dest: "{{ icingaweb_modules_remote_tmp_directory }}/"
+    #mode: 0700
     dest: "{{ icingaweb_modules_install_dir }}/modules/{{ item.key }}"
     owner: "{{ icingaweb_user }}"
     group: "{{ icingaweb_group }}"
+    mode: 0755
     remote_src: true
-    mode: 0750
   loop:
     "{{ icingaweb_modules | dict2items }}"
   loop_control:
-    label: "  theme: {{ item.key }}"
-
-- name: create theme checksum
-  copy:
-    dest: "{{ icingaweb_modules_install_dir }}/modules/{{ item.key }}/.checksum"
-    content: "{{ item.value.checksum }}"
-    owner: "{{ icingaweb_user }}"
-    group: "{{ icingaweb_group }}"
-    mode: 0640
-  loop:
-    "{{ icingaweb_modules | dict2items }}"
-  loop_control:
-    label: "  theme: {{ item.key }}"
+    label: "module: {{ item.key }}"
+  register: _extract_archive
+  when:
+    - item.value['download'] | default('false') | bool
 
 - name: fix rights for modules
   become: true
@@ -98,7 +83,36 @@
   loop:
     "{{ icingaweb_modules | dict2items }}"
   loop_control:
-    label: "  module: {{ item.name }}  - version: {{ item.version | default('', true) }}"
+    label: "module: {{ item.key }}"
+  when:
+    - _extract_archive is defined
+    - _extract_archive.changed
+
+# - name: copy modules in place
+#   become: true
+#   copy:
+#     src: "{{ icingaweb_modules_remote_tmp_directory }}/{{ item.key }}/"
+#     dest: "{{ icingaweb_modules_install_dir }}/modules/{{ item.key }}"
+#     owner: "{{ icingaweb_user }}"
+#     group: "{{ icingaweb_group }}"
+#     remote_src: true
+#     mode: 0750
+#   loop:
+#     "{{ icingaweb_modules | dict2items }}"
+#   loop_control:
+#     label: "module: {{ item.key }}"
+
+- name: create module checksum
+  copy:
+    dest: "{{ icingaweb_modules_install_dir }}/modules/{{ item.key }}/.checksum"
+    content: "{{ item.value.checksum }}"
+    owner: "{{ icingaweb_user }}"
+    group: "{{ icingaweb_group }}"
+    mode: 0640
+  loop:
+    "{{ icingaweb_modules | dict2items }}"
+  loop_control:
+    label: "module: {{ item.key }}"
 
 - name: enable / disable modules
   become: true
@@ -109,7 +123,7 @@
   loop:
     "{{ icingaweb_modules | dict2items }}"
   loop_control:
-    label: "  theme: {{ item.key }} - enabled: {{ item.value.enabled | default('False', true) }}"
+    label: "module: {{ item.key }} - enabled: {{ item.value.enabled | default('False', true) }}"
 
 - name: create custom fact file
   template:

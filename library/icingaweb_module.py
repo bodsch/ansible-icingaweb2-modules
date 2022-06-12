@@ -33,7 +33,7 @@ EXAMPLES = """
   become: true
   icingaweb_module:
     state: absent
-    module: dark_lord
+    modules: dark_lord
 """
 
 
@@ -43,59 +43,123 @@ class IcingaWeb2Modules(object):
     """
     module = None
 
-    def __init__(self):
+    def __init__(self, module):
         """
           Initialize all needed Variables
         """
+        self.module = module
+
         self.state = module.params.get("state")
-        self.module = module.params.get("module")
-        self.module_path = module.params.get("module_path")
+        self.install_directory = module.params.get("install_directory")
+        self.modules = module.params.get("modules")
+        self.checksums = module.params.get("checksums")
 
     def run(self):
         res = dict(
             changed=False,
             failed=False,
-            ansible_module_results="none"
         )
 
-        # module.log(msg="Module: {} - {}".format(self.module, self.state))
-
-        if(os.path.isdir(self.module_path)):
+        if os.path.isdir(self.install_directory):
             """
-
             """
-            source = os.path.join(self.module_path, self.module)
-            destination = os.path.join('/etc/icingaweb2/enabledModules', self.module)
+            changed = False
 
-            if(os.path.isdir(source)):
+            self.module.log(msg=f"  - modules: '{len(self.modules)}' - checksums: '{self.checksums}'")
 
-                module.log(msg="module {} exists".format(self.module))
+            if len(self.modules) > 0 and len(self.checksums) > 0:
+                """
+                """
+                _modules = self.modules.copy()
 
-                if(self.state == 'present'):
-                    """
-                      create link from '/usr/share/icingaweb2/modules/$MODULE' to '/etc/icingaweb2/enabledModules/$MODULE'
-                    """
-                    if(os.path.islink(destination) and os.readlink(destination) == source):
-                        # module.log(msg="link exists and is valid")
-                        pass
-                    else:
-                        if(not os.path.islink(destination)):
-                            self.create_link(source, destination)
+                for module in _modules:
+                    checksum = None
+                    module_checksum = None
+
+                    checksum_file = os.path.join(
+                        self.install_directory,
+                        module,
+                        ".checksum"
+                    )
+
+                    self.module.log(msg=f"Module: {module}")
+                    self.module.log(msg=f"- checksum_file : '{checksum_file}'")
+
+                    if os.path.exists(checksum_file):
+                        with open(checksum_file) as f:
+                            checksum = f.readlines()[0]
+
+                        if checksum is not None:
+                            module_checksum = self.checksums.get(module, {}).get("checksum")
+
+                        module_version = _modules.get(module, {}).get("version")
+                        installed_version = self.checksums.get(module, {}).get("version")
+
+                        self.module.log(msg=f"- module_version      : '{module_version}'")
+                        self.module.log(msg=f"- installed_version   : '{installed_version}'")
+
+                        version_compare_git = module_version in ["master", "main"]
+                        version_compare = module_version != installed_version
+                        checksum_compare = (checksum is not None and module_checksum is not None and module_checksum == checksum)
+
+                        self.module.log(msg=f"- version_compare_git : '{version_compare_git}'")
+                        self.module.log(msg=f"- version_compare     : '{version_compare}'")
+                        self.module.log(msg=f"- checksum_compare    : '{checksum_compare}'")
+
+                        if version_compare_git:
+                            self.modules[module]['download'] = True
+                            changed = True
                         else:
-                            if(os.readlink(destination) != source):
-                                module.log(msg="path '{}' is a broken symlink".format(destination))
-                                self.create_link(source, destination, True)
+                            if not version_compare and not checksum_compare:
+                                self.module.log(msg="- download == TRUE")
+                                self.modules[module]['download'] = True
+                                changed = True
                             else:
-                                self.create_link(source, destination)
+                                self.module.log(msg="- download == FALSE")
+                                self.modules[module]['download'] = False
 
-                        res['changed'] = True
+            else:
+                _modules = self.modules.copy()
 
-                else:
-                    if(os.path.islink(destination)):
-                        os.remove(destination)
-                        res['changed'] = True
+                for module in _modules:
+                    self.modules[module]['download'] = True
+                    changed = True
+
+            res['changed'] = changed
+            res['modules'] = self.modules
+
+            # source = os.path.join(self.install_directory, self.module)
+            # destination = os.path.join('/etc/icingaweb2/enabledModules', self.module)
+            #
+            # if(os.path.isdir(source)):
+            #
+            #     module.log(msg="module {} exists".format(self.module))
+            #
+            #     if(self.state == 'present'):
+            #         """
+            #           create link from '/usr/share/icingaweb2/modules/$MODULE' to '/etc/icingaweb2/enabledModules/$MODULE'
+            #         """
+            #         if(os.path.islink(destination) and os.readlink(destination) == source):
+            #             # module.log(msg="link exists and is valid")
+            #             pass
+            #         else:
+            #             if(not os.path.islink(destination)):
+            #                 self.create_link(source, destination)
+            #             else:
+            #                 if(os.readlink(destination) != source):
+            #                     module.log(msg="path '{}' is a broken symlink".format(destination))
+            #                     self.create_link(source, destination, True)
+            #                 else:
+            #                     self.create_link(source, destination)
+            #
+            #             res['changed'] = True
+            #
+            #     else:
+            #         if(os.path.islink(destination)):
+            #             os.remove(destination)
+            #             res['changed'] = True
         else:
-            msg = "{} is no directory".format(self.module_path)
+            msg = f"{self.install_directory} is no directory"
 
             res['ansible_module_results'] = msg
             res['failed'] = True
@@ -121,17 +185,32 @@ class IcingaWeb2Modules(object):
 
 
 def main():
-    global module
+    """
+    """
     module = AnsibleModule(
         argument_spec=dict(
-            state=dict(default="present", choices=["absent", "present"]),
-            module=dict(required=True),
-            module_path=dict(required=False, default='/usr/share/icingaweb2/modules'),
+            state=dict(
+                default="verify",
+                choices=["verify", "absent", "present"]
+            ),
+            install_directory=dict(
+                required=True,
+                type="path",
+                # default='/usr/share/icingaweb2/modules'
+            ),
+            modules=dict(
+                required=True,
+                type=dict
+            ),
+            checksums=dict(
+                required=True,
+                type=dict
+            ),
         ),
         supports_check_mode=False,
     )
 
-    icingaweb = IcingaWeb2Modules()
+    icingaweb = IcingaWeb2Modules(module)
     result = icingaweb.run()
 
     module.log(msg="= result : '{}'".format(result))

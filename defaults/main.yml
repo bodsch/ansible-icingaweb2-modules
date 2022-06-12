@@ -1,6 +1,6 @@
 ---
 
-icingaweb_themes_install_dir: /usr/share/icingaweb2
+icingaweb_modules_install_dir: /usr/share/icingaweb2
 
 icingaweb_modules:
   audit:

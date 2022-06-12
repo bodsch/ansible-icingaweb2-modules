@@ -56,4 +56,34 @@
     group: root
     mode: 0755
 
+- name: get local fact for modules
+  set_fact:
+    local_icingaweb_modules: "{{ ansible_local.icingaweb2_modules.modules }}"
+  when:
+    - ansible_local.icingaweb2_modules is defined
+    - ansible_local.icingaweb2_modules.modules is defined
+    - ansible_local.icingaweb2_modules.modules | length != 0
+
+- name: detect changed modules
+  icingaweb_module:
+    state: verify
+    install_directory: "{{ icingaweb_modules_install_dir }}/modules"
+    modules: "{{ icingaweb_modules }}"
+    checksums: "{{ local_icingaweb_modules | default({}) }}"
+  when:
+    - icingaweb_modules is defined
+    - icingaweb_modules | count > 0
+    - icingaweb_modules | type == "dict"
+  register: changed_icingaweb_modules
+
+- name: re-define icingaweb_modules
+  set_fact:
+    icingaweb_modules: "{{ changed_icingaweb_modules.modules }}"
+  when:
+    - changed_icingaweb_modules.modules is defined
+    - changed_icingaweb_modules.changed
+
+- name: re-read setup
+  setup:
+
 ...
