@@ -54,27 +54,27 @@
   when:
     - item.value['download'] | default('false') | bool
 
-- name: create module directories
-  become: true
-  file:
-    state: directory
-    path: "{{ icingaweb_modules_install_dir }}/modules/{{ item.key }}"
-    owner: "{{ icingaweb_user }}"
-    group: "{{ icingaweb_group }}"
-    mode: 0755
-  loop:
-    "{{ icingaweb_modules | dict2items }}"
-  loop_control:
-    label: "module: {{ item.key }}"
-  when:
-    - item.value['download'] | default('false') | bool
+# - name: create module directories
+#   become: true
+#   file:
+#     state: directory
+#     path: "{{ icingaweb_modules_install_dir }}/modules/{{ item.key }}"
+#     owner: "{{ icingaweb_user }}"
+#     group: "{{ icingaweb_group }}"
+#     mode: 0755
+#   loop:
+#     "{{ icingaweb_modules | dict2items }}"
+#   loop_control:
+#     label: "module: {{ item.key }}"
+#   when:
+#     - item.value['download'] | default('false') | bool
 
 - name: extract module archives
   unarchive:
     src: "{{ icingaweb_modules_remote_tmp_directory }}/{{ item.key }}.zip"
     #dest: "{{ icingaweb_modules_remote_tmp_directory }}/"
     #mode: 0700
-    dest: "{{ icingaweb_modules_install_dir }}/modules/{{ item.key }}"
+    dest: "{{ icingaweb_modules_install_dir }}/modules/"
     owner: "{{ icingaweb_user }}"
     group: "{{ icingaweb_group }}"
     mode: 0755

@@ -54,12 +54,10 @@ def get_vars(host):
 
 @pytest.mark.parametrize("dirs", [
     "/etc/icingaweb2/modules",
-    "/usr/share/icingaweb2/modules/unicorn",
-    "/usr/share/icingaweb2/modules/unicorn/public",
-    "/usr/share/icingaweb2/modules/unicorn/screenshots",
-    "/usr/share/icingaweb2/modules/batman-dark",
-    "/usr/share/icingaweb2/modules/batman-dark/public",
-    "/usr/share/icingaweb2/modules/batman-dark/screenshots",
+    "/usr/share/icingaweb2/modules/audit",
+    "/usr/share/icingaweb2/modules/pdfexport",
+    "/usr/share/icingaweb2/modules/graphite",
+    "/usr/share/icingaweb2/modules/grafana",
 ])
 def test_directories(host, dirs):
     d = host.file(dirs)
@@ -67,10 +65,10 @@ def test_directories(host, dirs):
 
 
 @pytest.mark.parametrize("files", [
-    "/usr/share/icingaweb2/modules/unicorn/module.info",
-    "/usr/share/icingaweb2/modules/unicorn/public/css/themes/unicorn.less",
-    "/usr/share/icingaweb2/modules/batman-dark/module.info",
-    "/usr/share/icingaweb2/modules/batman-dark/public/css/themes/batman.less",
+    "/usr/share/icingaweb2/modules/audit/module.info",
+    "/usr/share/icingaweb2/modules/pdfexport/module.info",
+    "/usr/share/icingaweb2/modules/graphite/module.info",
+    "/usr/share/icingaweb2/modules/grafana/module.info",
 ])
 def test_files(host, files):
     f = host.file(files)
