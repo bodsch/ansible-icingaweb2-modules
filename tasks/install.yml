@@ -54,6 +54,21 @@
   when:
     - item.value['download'] | default('false') | bool
 
+- name: create module directories
+  become: true
+  file:
+    state: directory
+    path: "{{ icingaweb_modules_install_dir }}/modules/{{ item.key }}"
+    owner: "{{ icingaweb_user }}"
+    group: "{{ icingaweb_group }}"
+    mode: 0755
+  loop:
+    "{{ icingaweb_modules | dict2items }}"
+  loop_control:
+    label: "module: {{ item.key }}"
+  when:
+    - item.value['download'] | default('false') | bool
+
 - name: extract module archives
   unarchive:
     src: "{{ icingaweb_modules_remote_tmp_directory }}/{{ item.key }}.zip"
@@ -72,6 +87,20 @@
   when:
     - item.value['download'] | default('false') | bool
 
+# - name: copy modules in place
+#   become: true
+#   copy:
+#     src: "{{ icingaweb_modules_remote_tmp_directory }}/{{ item.key }}/"
+#     dest: "{{ icingaweb_modules_install_dir }}/modules/{{ item.key }}"
+#     owner: "{{ icingaweb_user }}"
+#     group: "{{ icingaweb_group }}"
+#     remote_src: true
+#     mode: 0750
+#   loop:
+#     "{{ icingaweb_modules | dict2items }}"
+#   loop_control:
+#     label: "module: {{ item.key }}"
+
 - name: fix rights for modules
   become: true
   file:
@@ -87,20 +116,6 @@
   when:
     - _extract_archive is defined
     - _extract_archive.changed
-
-# - name: copy modules in place
-#   become: true
-#   copy:
-#     src: "{{ icingaweb_modules_remote_tmp_directory }}/{{ item.key }}/"
-#     dest: "{{ icingaweb_modules_install_dir }}/modules/{{ item.key }}"
-#     owner: "{{ icingaweb_user }}"
-#     group: "{{ icingaweb_group }}"
-#     remote_src: true
-#     mode: 0750
-#   loop:
-#     "{{ icingaweb_modules | dict2items }}"
-#   loop_control:
-#     label: "module: {{ item.key }}"
 
 - name: create module checksum
   copy:
