@@ -127,37 +127,6 @@ class IcingaWeb2Modules(object):
 
             res['changed'] = changed
             res['modules'] = self.modules
-
-            # source = os.path.join(self.install_directory, self.module)
-            # destination = os.path.join('/etc/icingaweb2/enabledModules', self.module)
-            #
-            # if(os.path.isdir(source)):
-            #
-            #     module.log(msg="module {} exists".format(self.module))
-            #
-            #     if(self.state == 'present'):
-            #         """
-            #           create link from '/usr/share/icingaweb2/modules/$MODULE' to '/etc/icingaweb2/enabledModules/$MODULE'
-            #         """
-            #         if(os.path.islink(destination) and os.readlink(destination) == source):
-            #             # module.log(msg="link exists and is valid")
-            #             pass
-            #         else:
-            #             if(not os.path.islink(destination)):
-            #                 self.create_link(source, destination)
-            #             else:
-            #                 if(os.readlink(destination) != source):
-            #                     module.log(msg="path '{}' is a broken symlink".format(destination))
-            #                     self.create_link(source, destination, True)
-            #                 else:
-            #                     self.create_link(source, destination)
-            #
-            #             res['changed'] = True
-            #
-            #     else:
-            #         if(os.path.islink(destination)):
-            #             os.remove(destination)
-            #             res['changed'] = True
         else:
             msg = f"{self.install_directory} is no directory"
 
