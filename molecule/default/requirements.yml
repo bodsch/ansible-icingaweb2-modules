@@ -39,6 +39,6 @@
 - name: icingaweb
   src: https://github.com/bodsch/ansible-icingaweb2.git
   scm: git
-  version: feature/move-themes-and-modules
+  version: 1.8.0
 
 ...
