@@ -25,10 +25,6 @@ nginx_vhosts:
     state: present  # default: present
     enabled: true   # default: true
 
-    domains:
-      -
-    filename: 00-icinga.molecule.lan
-
     listen:
       - 80
 

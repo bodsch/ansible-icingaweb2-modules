@@ -38,9 +38,9 @@ icingaweb_modules:
       defaultdashboard:
         # name: icinga2-default
         uid: Z-TfDRpGz
-      # publichost
-      # publicprotocol
-      # debug: true
+      ##  publichost
+      ##  publicprotocol
+      ##  debug: true
     graphs:
       ping4:
         dashboard: hostalive
