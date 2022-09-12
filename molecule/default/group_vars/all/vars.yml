@@ -4,7 +4,7 @@ icingaweb_modules:
   audit:
     enabled: true
     src: https://github.com/Icinga/icingaweb2-module-audit.git
-    version: v1.0.1
+    version: v1.0.2
     configuration:
       log:
         type: file
@@ -16,12 +16,12 @@ icingaweb_modules:
   pdfexport:
     enabled: true
     src: https://github.com/Icinga/icingaweb2-module-pdfexport
-    version: v0.10.1
+    version: v0.10.2
 
   graphite:
     enabled: true
     src: https://github.com/Icinga/icingaweb2-module-graphite.git
-    version: v1.1.0
+    version: v1.2.1
     configuration:
       host: localhost
       ui:
@@ -31,7 +31,7 @@ icingaweb_modules:
   grafana:
     enabled: true
     src: https://github.com/Mikesch-mp/icingaweb2-module-grafana.git
-    version: v1.3.6
+    version: v1.4.2
     configuration:
       host: tsdb.icinga.local
       enableLink: true

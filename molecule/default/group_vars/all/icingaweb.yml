@@ -2,6 +2,12 @@
 
 # icingaweb_version: 2.9.0
 
+icingaweb_web_modules:
+  - name: icinga-php-library
+    version: 0.10.0
+  - name: icinga-php-thirdparty
+    version: 0.11.0
+
 icingaweb_log_level: WARN
 
 icingaweb_resources:
