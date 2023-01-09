@@ -3,7 +3,7 @@
 - name: create module archive on ansible controller
   become: false
   delegate_to: localhost
-  archive:
+  community.general.archive:
     path: "{{ icingaweb_modules_local_tmp_directory }}/{{ item.key }}"
     dest: "{{ icingaweb_modules_local_tmp_directory }}/{{ item.key }}.zip"
     mode: 0660
@@ -23,7 +23,7 @@
 - name: define checksums from archive
   become: false
   delegate_to: localhost
-  stat:
+  ansible.builtin.stat:
     path: "{{ icingaweb_modules_local_tmp_directory }}/{{ item.key }}.zip"
     checksum_algorithm: sha256
   register: _module_checksum
@@ -33,15 +33,15 @@
     label: "module: {{ item.key }}"
 
 - name: append checksums to icingaweb_modules
-  set_fact:
+  ansible.builtin.set_fact:
     icingaweb_modules: "{{ icingaweb_modules | append_checksum(_module_checksum) }}"
 
 - name: update facts
-  setup:
+  ansible.builtin.setup:
 
 - name: propagate modules archives
   become: true
-  copy:
+  ansible.builtin.copy:
     src: "{{ icingaweb_modules_local_tmp_directory }}/{{ item.key }}.zip"
     dest: "{{ icingaweb_modules_remote_tmp_directory }}/"
     mode: 0660
@@ -53,7 +53,7 @@
     - item.value['download'] | default('false') | bool
 
 - name: extract module archives
-  unarchive:
+  ansible.builtin.unarchive:
     src: "{{ icingaweb_modules_remote_tmp_directory }}/{{ item.key }}.zip"
     dest: "{{ icingaweb_modules_install_dir }}/modules/"
     owner: "{{ icingaweb_user }}"
@@ -70,7 +70,7 @@
 
 - name: fix rights for modules
   become: true
-  file:
+  ansible.builtin.file:
     path: "{{ icingaweb_modules_install_dir }}/modules/{{ item.key }}"
     owner: "{{ icingaweb_user }}"
     group: "{{ icingaweb_group }}"
@@ -85,7 +85,7 @@
     - _extract_archive.changed
 
 - name: create module checksum
-  copy:
+  ansible.builtin.copy:
     dest: "{{ icingaweb_modules_install_dir }}/modules/{{ item.key }}/.checksum"
     content: "{{ item.value.checksum }}"
     owner: "{{ icingaweb_user }}"
@@ -108,7 +108,7 @@
     label: "module: {{ item.key }} - enabled: {{ item.value.enabled | default('False', true) }}"
 
 - name: create custom fact file
-  template:
+  ansible.builtin.template:
     src: facts.d/icingaweb2_modules.fact.j2
     dest: /etc/ansible/facts.d/icingaweb2_modules.fact
     owner: root

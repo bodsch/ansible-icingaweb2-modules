@@ -7,8 +7,8 @@ galaxy_info:
   author: Bodo Schulz
   description: ansible role to install icingaweb2-modules
 
-  license: BSD
-  min_ansible_version: 2.10
+  license: Apache
+  min_ansible_version: "2.10"
 
   platforms:
     - name: ArchLinux

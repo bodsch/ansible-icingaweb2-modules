@@ -3,7 +3,7 @@
 - name: download external modules to ansible controller
   become: false
   delegate_to: localhost
-  git:
+  ansible.builtin.git:
     depth: 1  # copy the least bit of history possible to get that repo.
     repo: "{{ item.value.src }}"
     version: "{{ item.value.version | default('') }}"

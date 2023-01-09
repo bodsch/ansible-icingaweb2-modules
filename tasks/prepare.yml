@@ -1,7 +1,7 @@
 ---
 
 - name: include OS specific configuration
-  include_vars: "{{ lookup('first_found', params) }}"
+  ansible.builtin.include_vars: "{{ lookup('first_found', params) }}"
   vars:
     params:
       paths:
@@ -21,35 +21,36 @@
 - name: create local temp directory
   become: false
   delegate_to: localhost
-  file:
+  ansible.builtin.file:
     path: "{{ icingaweb_modules_local_tmp_directory }}"
     state: directory
     mode: 0700
 
 - name: create remote temp directory
-  file:
+  ansible.builtin.file:
     path: "{{ icingaweb_modules_remote_tmp_directory }}"
     state: directory
     mode: 0700
 
-- block:
+- name: handle icingaweb group
+  when:
+    - not icingaweb_group is defined or icingaweb_group | length > 0
+  block:
     - name: "find primary group for user '{{ icingaweb_user }}'"
       become: true
-      getent:
+      ansible.builtin.getent:
         database: group
         key: "{{ icingaweb_user }}"
         split: ':'
 
     - name: "set icingaweb_group '{{ getent_group | list | first }}'"
-      set_fact:
+      ansible.builtin.set_fact:
         icingaweb_group: "{{ getent_group | list | first }}"
       when:
         - getent_group is defined
-  when:
-    - not icingaweb_group is defined or icingaweb_group | length > 0
 
 - name: make sure ansible local facts directory exists
-  file:
+  ansible.builtin.file:
     dest: /etc/ansible/facts.d
     state: directory
     owner: root
@@ -57,7 +58,7 @@
     mode: 0755
 
 - name: get local fact for modules
-  set_fact:
+  ansible.builtin.set_fact:
     local_icingaweb_modules: "{{ ansible_local.icingaweb2_modules.modules }}"
   when:
     - ansible_local.icingaweb2_modules is defined
@@ -77,13 +78,13 @@
   register: changed_icingaweb_modules
 
 - name: re-define icingaweb_modules
-  set_fact:
+  ansible.builtin.set_fact:
     icingaweb_modules: "{{ changed_icingaweb_modules.modules }}"
   when:
     - changed_icingaweb_modules.modules is defined
     - changed_icingaweb_modules.changed
 
 - name: re-read setup
-  setup:
+  ansible.builtin.setup:
 
 ...

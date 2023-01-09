@@ -4,13 +4,15 @@
 Install Modules for icingaweb2.
 
 
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/bodsch/ansible-icingaweb2-modules/CI)][ci]
+[![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/bodsch/ansible-icingaweb2-modules/main.yml?branch=main)][ci]
 [![GitHub issues](https://img.shields.io/github/issues/bodsch/ansible-icingaweb2-modules)][issues]
 [![GitHub release (latest by date)](https://img.shields.io/github/v/release/bodsch/ansible-icingaweb2-modules)][releases]
+[![Ansible Quality Score](https://img.shields.io/ansible/quality/50067?label=role%20quality)][quality]
 
 [ci]: https://github.com/bodsch/ansible-icingaweb2-modules/actions
 [issues]: https://github.com/bodsch/ansible-icingaweb2-modules/issues?q=is%3Aopen+is%3Aissue
 [releases]: https://github.com/bodsch/ansible-icingaweb2-modules/releases
+[quality]: https://galaxy.ansible.com/bodsch/icingaweb2_modules
 
 
 ## usage
@@ -293,3 +295,16 @@ icingaweb_modules:
         repeatable: false
 ```
 
+
+
+----
+
+## Author and License
+
+- Bodo Schulz
+
+## License
+
+[Apache](LICENSE)
+
+`FREE SOFTWARE, HELL YEAH!`
