@@ -21,9 +21,12 @@ nginx_logformat:
 
 nginx_vhosts:
   icinga.molecule.lan:
-    filename: 00-icingaweb.conf
+    filename: 00-icinga.molecule.lan.conf
     state: present  # default: present
     enabled: true   # default: true
+
+    domains:
+      - icinga.molecule.lan
 
     listen:
       - 80
