@@ -20,7 +20,7 @@ nginx_logformat:
     # escape: json
 
 nginx_vhosts:
-  default:
+  icinga.molecule.lan:
     filename: 00-icingaweb.conf
     state: present  # default: present
     enabled: true   # default: true
