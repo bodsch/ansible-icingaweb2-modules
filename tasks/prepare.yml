@@ -49,13 +49,13 @@
       when:
         - getent_group is defined
 
-- name: make sure ansible local facts directory exists
-  ansible.builtin.file:
-    dest: /etc/ansible/facts.d
-    state: directory
-    owner: root
-    group: root
-    mode: 0755
+# - name: make sure ansible local facts directory exists
+#   ansible.builtin.file:
+#     dest: /etc/ansible/facts.d
+#     state: directory
+#     owner: root
+#     group: root
+#     mode: 0755
 
 - name: get local fact for modules
   ansible.builtin.set_fact:
@@ -74,7 +74,7 @@
   when:
     - icingaweb_modules is defined
     - icingaweb_modules | count > 0
-    - icingaweb_modules | type == "dict"
+    - icingaweb_modules | bodsch.core.type == "dict"
   register: changed_icingaweb_modules
 
 - name: re-define icingaweb_modules

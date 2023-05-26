@@ -15,28 +15,22 @@ class FilterModule(object):
 
     def filters(self):
         return {
-            'type': self.var_type,
             'dict_from_list': self.dict_from_list,
             'append_checksum': self.append_checksum,
+            'installed_modules': self.installed_modules,
         }
-
-    def var_type(self, var):
-        """
-          Get the type of a variable
-        """
-        return type(var).__name__
 
     def dict_from_list(self, data, search):
         """
         """
-        display.v("dict_from_list({}, {})".format(data, search))
+        display.v(f"dict_from_list({data}, {search})")
 
         if(isinstance(data, dict)):
             result = data.get(search, {})
         else:
             result = next((item for item in data if item.get('name') == search), {})
 
-        display.v("result : {}".format(result))
+        display.v(f"result : {result}")
 
         return result
 
@@ -55,6 +49,23 @@ class FilterModule(object):
 
         result = data
 
-        display.v("result : {}".format(result))
+        display.v(f"result : {result}")
 
         return result
+
+    def installed_modules(self, data):
+        """
+        """
+        _data = data.copy()
+        if isinstance(data, dict):
+            for t, v in _data.items():
+                # display.v(f"  - {t}")
+                # display.v(f"    {v}")
+                if v.get("download", None):
+                    _ = v.pop("download")
+                if v.get("src", None):
+                    _ = v.pop("src")
+
+        # display.v(f"result : {_data}")
+
+        return _data

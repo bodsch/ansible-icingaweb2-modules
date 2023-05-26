@@ -19,7 +19,7 @@ platforms:
     docker_networks:
       - name: icinga
         ipam_config:
-          - subnet: "10.11.0.0/16"
+          - subnet: "10.11.0.0/24"
             gateway: "10.11.0.254"
     networks:
       - name: icinga
@@ -59,16 +59,19 @@ provisioner:
   name: ansible
   ansible_args:
     - --diff
-    # - -v
+    - -v
   config_options:
     defaults:
       deprecation_warnings: true
       stdout_callback: yaml
       callbacks_enabled: profile_tasks
+      gathering: smart
+      fact_caching: jsonfile
+      fact_caching_timeout: 8640
+      fact_caching_connection: ansible_facts
 
 scenario:
   test_sequence:
-    # - lint
     - destroy
     - dependency
     - syntax
