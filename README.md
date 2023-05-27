@@ -14,6 +14,19 @@ Install Modules for icingaweb2.
 [releases]: https://github.com/bodsch/ansible-icingaweb2-modules/releases
 [quality]: https://galaxy.ansible.com/bodsch/icingaweb2_modules
 
+## Requirements & Dependencies
+
+Ansible Collections
+
+- [bodsch.core](https://github.com/bodsch/ansible-collection-core)
+
+```bash
+ansible-galaxy collection install bodsch.core
+```
+or
+```bash
+ansible-galaxy collection install --requirements-file collections.yml
+```
 
 ## usage
 
@@ -295,8 +308,6 @@ icingaweb_modules:
         repeatable: false
 ```
 
-
-
 ----
 
 ## Author and License
@@ -307,4 +318,4 @@ icingaweb_modules:
 
 [Apache](LICENSE)
 
-`FREE SOFTWARE, HELL YEAH!`
+**FREE SOFTWARE, HELL YEAH!**

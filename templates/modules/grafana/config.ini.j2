@@ -39,7 +39,7 @@
   {% endif %}
 
 [grafana]
-version                 = "{{ grafana.support_grafana_5 | default('true') | bool | ternary('1', '0') }}"
+version                 = "{{ grafana.support_grafana_5 | default('true') | bool | bodsch.core.config_bool(true_as='1', false_as='0') }}"
 host                    = "{{ grafana.host | default('127.0.0.1') }}:{{ grafana.port | default('3000') }}"
 protocol                = "{{ grafana.protocol | default('http') }}"
 timerange               = "{{ _timerange }}"
@@ -51,7 +51,7 @@ defaultdashboarduid     = "{{ grafana.defaultdashboard.uid | default('') }}"
   {% endif %}
 defaultdashboardpanelid = "{{ grafana.defaultdashboard.panelid | default('1') }}"
 defaultorgid            = "{{ grafana.defaultorgid | default('1') }}"
-shadows                 = "{{ grafana.shadows | default('false') | bool | ternary('1', '0') }}"
+shadows                 = "{{ grafana.shadows | default('false') | bool | bodsch.core.config_bool(true_as='1', false_as='0') }}"
 theme                   = "{{ _default_theme }}"
 datasource              = "{{ _datasource }}"
 
@@ -75,7 +75,7 @@ authentication          = "anon"
       {% endif %}
 
       {% if grafana.accessmode == "indirectproxy" %}
-indirectproxyrefresh    = "{{ grafana.indirectproxyrefresh | default('false') | bool | ternary('yes', 'no') }}"
+indirectproxyrefresh    = "{{ grafana.indirectproxyrefresh | default('false') | bool | bodsch.core.config_bool(true_as='yes', false_as='no') }} }}"
       {% endif %}
 proxytimeout            = "{{ grafana.accessmode | default('5') }}"
     {% endif %}
@@ -83,15 +83,15 @@ proxytimeout            = "{{ grafana.accessmode | default('5') }}"
 accessmode              = "direct"
   {% endif %}
 
-directrefresh           = "{{ grafana.directrefresh | default('false') | bool | ternary('yes', 'no') }}"
+directrefresh           = "{{ grafana.directrefresh | default('false') | bool | bodsch.core.config_bool(true_as='yes', false_as='no') }} }}"
 height                  = "{{ grafana.height | default('280') }}"
 width                   = "{{ grafana.width | default('640') }}"
-enableLink              = "{{ grafana.enableLink | default('false') | bool | ternary('yes', 'no') }}"
+enableLink              = "{{ grafana.enableLink | default('false') | bool | bodsch.core.config_bool(true_as='yes', false_as='no') }} }}"
   {% if grafana.usepublic is defined and
         grafana.usepublic | default('false') | bool %}
 usepublic               = "yes"
 publichost              = "{{ grafana.publichost }}"
 publicprotocol          = "{{ grafana.publicprotocol | default('http') }}"
   {% endif %}
-debug                   = "{{ grafana.debug | default('false') | bool | ternary('1', '0') }}"
+debug                   = "{{ grafana.debug | default('false') | bool | bodsch.core.config_bool(true_as='1', false_as='0') }}"
 {% endif %}

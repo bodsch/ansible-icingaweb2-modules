@@ -10,8 +10,8 @@
 [{{ g }}]
     {% for k,v in _config.items() | sort %}
       {% if k in _attr %}
-        {% if v | type == "bool" %}
-{{ k }} = "{{ v | default('false') | bool | ternary( 'yes', 'no') }}"
+        {% if v | bodsch.core.type == "bool" %}
+{{ k }} = "{{ v | default('false') | bool | bodsch.core.config_bool(true_as='true', false_as='false') }}"
         {% else %}
 {{ k }} = "{{ v }}"
         {% endif %}
